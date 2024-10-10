@@ -17,7 +17,7 @@ virtualenv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 ```
 
-#### 2. Install Dependencies
+### 2. Install Dependencies
 
 Once the virtual environment is activated, install the project dependencies from the `requirements.txt` file:
 
@@ -25,7 +25,7 @@ Once the virtual environment is activated, install the project dependencies from
 pip install -r requirements.txt
 ```
 
-## 3. Set Up Environment Variables
+### 3. Set Up Environment Variables
 
 Create a `.env` file in the project root directory and add the required environment variables. For example:
 
@@ -35,20 +35,20 @@ DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 ```
 
-## 4. Apply Database Migrations
+### 4. Apply Database Migrations
 
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-## 5. Run the Development Server
+### 5. Run the Development Server
 
 ```bash
 python manage.py runserver
 ```
 
-## 6. Accessing the Application
+### 6. Accessing the Application
 
 ```bash
 http://127.0.0.1:8000/
