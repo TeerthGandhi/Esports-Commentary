@@ -278,8 +278,6 @@ $(document).ready(function () {
                $('#video-card').show(); // Show the video card
                $('#video-iframe').attr('src', response.video_url).show(); // Set the video URL and show the iframe
             } else {
-               // If response status is not 'success', show an error message and hide the video card
-               // alert('Error: ' + response.message);
 
                // Show error toast with the response message
                M.toast({
@@ -293,13 +291,12 @@ $(document).ready(function () {
          },
          error: function (xhr, status, error) {
             console.error('Form submission failed: ', error);
-            // alert('Form submission failed! Please try again.');
 
             // Show error toast
             M.toast({
-               html: 'Form submission failed! Please try again.'
-            });
-
+                  html: 'Form submission failed! Please try again.',
+                  classes: 'rounded red'
+               });
 
             // Hide the preloader and show the form again on failure
             $('#preloader').hide();
