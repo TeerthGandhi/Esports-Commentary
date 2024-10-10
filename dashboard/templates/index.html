@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+{% load static %}  <!-- Add this line at the top of your template to load the static tag library -->
+
+
+{% block content %}
+
+<style>
+/* Add left padding to the icon inside brand-logo */
+.brand-logo i.material-icons {
+    padding-left: 20px; /* Adjust this value as per your requirement */
+}
+   
+/* Add margin to the bottom of the first nav */
+nav.light-blue.lighten-1 {
+  margin-bottom: 5px; /* Adjust this value as needed */
+}
+
+/* Add margin to the top of the second nav */
+nav.light-blue.lighten-1 + nav.light-blue.lighten-1 {
+  margin-top: 5px; /* Adjust this value as needed */
+}
+
+
+nav .input-field input[type="search"] {
+    height: auto !important; /* This will set the height to auto and override any conflicting styles */
+}
+
+
+body {
+    background-color: #f5f5f5 !important; /* Your specific background color */
+  }
+
+/* Add space above and below the nav */
+.spaced-nav {
+    margin-top: 4px; /* Adjust space above */
+    margin-bottom: 20px; /* Adjust space below */
+}
+
+/* Turn off flex for card-content */
+.card-content {
+      display: block; /* This disables flex and sets block layout */
+    }
+
+/* Custom Card Styling */
+.card {
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      margin-top: 30px;
+    }
+
+    .card-action {
+      padding: 10px 20px;
+      background-color: #0288d1;
+      border-radius: 0px 0px 10px 10px;
+    }
+
+    /* Custom Input Fields */
+.input-field input[type="text"] {
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+
+.file-field .file-path {
+  border-radius: 2px !important; /* Ensure the file path itself stays original */
+  
+}
+
+#preloader {
+    display: none;  /* Hidden by default */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    z-index: 999;  /* Ensure it overlays other content */
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center;     /* Vertically center */
+}
+
+.preloader-wrapper.big.active {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+    
+</style>
+
+
+
+<nav class="blue-grey darken-4">
+
+  <div class="row container blue-grey darken-4">
+  <div class="nav-wrapper grey">
+      <a href="#" class="brand-logo" style="font-size: 18px;font-weight: 500;">Esports Commentary</a>
+
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <!-- <li><a href="sass.html" style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">insert_drive_file</i>Templates</a></li> -->
+      <li><a href="sass.html" style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">dashboard</i>Dashboard</a></li>
+      <li><a href="sass.html" style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">account_box</i>About Us</a></li>
+      <li><a href="sass.html" style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">chat</i>Contact Us</a></li>
+      <li><a href="sass.html" style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">exit_to_app</i>Logout</a></li>
+    </ul>
+
+  </div>
+</div>
+
+</nav>
+
+<nav class="spaced-nav blue">
+
+  <div class="row container blue">
+     <div class="nav-wrapper blue">
+        <div class="col s12">
+            <a href="#!" class="breadcrumb">Dashboard</a>
+            <a href="#!" class="breadcrumb">Upload</a>
+        </div>
+    </div>
+  </div>
+  
+</nav>
+
+<div class="section white">
+  <div class="row container">
+
+    <h5 class="header" style="font-weight: bold;">Howdy,</h5>
+    <p class="grey-text ">Please upload your video here</p>
+
+  </div>
+  
+</div>
+
+<div class="divider"></div>
+<br>
+
+
+<div class="row container" id="form-container" style="position: relative;">
+  <div class="col s12 m12">
+    <div class="card horizontal">
+      <div class="card-stacked">
+
+        <div class="card-content">
+          <div class="row">
+
+            <form class="col s12" id="ajaxForm" enctype="multipart/form-data">
+              {% csrf_token %}  <!-- CSRF Token for security -->
+          
+              <!-- Textarea Form -->
+              <div class="input-field col s12">
+                  <textarea id="textarea1" name="textarea_field" class="materialize-textarea"></textarea>
+                  <label for="textarea1">Textarea</label>
+              </div>
+          
+              <!-- Game Type Dropdown -->
+              <div class="col s12 m6">
+                  <div class="input-field col s12">
+                      <select name="game_type">
+                          <option value="" disabled selected>Choose your option</option>
+                          <option value="1">Game 1</option>
+                          <option value="2">Game 2</option>
+                          <option value="3">Game 3</option>
+                      </select>
+                      <label>Game Type</label>
+                  </div>
+              </div>
+          
+              <!-- File Upload -->
+              <div class="col s12 m6">
+                  <div class="file-field input-field">
+                      <div class="btn blue">
+                          <span>File</span>
+                          <input type="file" name="file_upload" id="file_upload">
+                      </div>
+                      <div class="file-path-wrapper">
+                          <input class="file-path validate" type="text">
+                      </div>
+                  </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+        <!-- Preloader Spinner (Positioned over the form) -->
+        <div id="preloader" class="center" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.8); z-index: 999;">
+          <div class="preloader-wrapper active">
+            <div class="spinner-layer spinner-blue-only">
+              <div class="circle-clipper left">
+                <div class="circle"></div>
+              </div><div class="gap-patch">
+                <div class="circle"></div>
+              </div><div class="circle-clipper right">
+                <div class="circle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Action with Submit Button -->
+        <div class="card-action">
+          <!-- Submit Button -->
+          <button class="btn waves-effect waves-light right blue" type="submit" id="submitForm">Submit
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<br>
+
+<div class="row container">
+  <div class="row">
+    <div class="col s12 m12">
+      <div class="card grey lighten-5" id="video-card" style="display: none;">  <!-- Initially hidden -->
+
+        <div class="video-container">
+          <!-- Video iframe placeholder (hidden initially) -->
+          <iframe id="video-iframe" width="853" height="480" style="display:none;" frameborder="0" allowfullscreen></iframe>
+        </div>
+          
+        <div class="card-content">
+          <span class="card-title">Card Title</span>
+          <p>I am a very simple card. I am good at containing small bits of information.
+          I am convenient because I require little markup to use effectively.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<br>
+<br>
+<br>
+
+<script>
+
+
+$(document).ready(function(){
+    $('select').formSelect();
+  });
+
+  // $(document).ready(function() {
+  //       $('#submitForm').click(function(event) {
+  //           event.preventDefault();  // Prevent the default form submission
+
+  //           var formData = new FormData($('#ajaxForm')[0]);  // Create FormData object from the form
+
+  //           $.ajax({
+  //               url: '{% url "upload" %}',  // Replace with the URL to your Django view
+  //               type: 'POST',
+  //               data: formData,
+  //               processData: false,
+  //               contentType: false,
+  //               success: function(response) {
+  //                   console.log('Form submitted successfully: ', response);
+  //                   alert('Form submitted successfully!');
+  //               },
+  //               error: function(xhr, status, error) {
+  //                   console.error('Form submission failed: ', error);
+  //                   alert('Form submission failed! Please try again.');
+  //               }
+  //           });
+  //       });
+  //   });
+
+  // $(document).ready(function() {
+  //       $('#submitForm').click(function(event) {
+  //           event.preventDefault();  // Prevent the default form submission
+
+  //           var formData = new FormData($('#ajaxForm')[0]);  // Create FormData object from the form
+
+  //           $.ajax({
+  //               url: '{% url "upload" %}',  // Replace with the URL to your Django view
+  //               type: 'POST',
+  //               data: formData,
+  //               processData: false,
+  //               contentType: false,
+  //               success: function(response) {
+  //                   console.log('Form submitted successfully: ', response);
+
+  //                   // Check if the response is successful and contains the video URL
+  //                   if (response.status === 'success') {
+  //                       $('#form-container').hide();  // Hide the form
+  //                       // On success, show the video card and update iframe source with the video URL returned from the server
+  //                       $('#video-card').show();  // Show the card
+  //                       $('#video-iframe').attr('src', response.video_url).show();  // Set the video URL and show the iframe
+  //                   } else {
+  //                       // If response status is not 'success', hide the video card and show error message
+  //                       $('#video-card').hide();
+  //                       alert('Error: ' + response.message);
+  //                   }
+  //               },
+  //               error: function(xhr, status, error) {
+  //                   console.error('Form submission failed: ', error);
+  //                   alert('Form submission failed! Please try again.');
+  //               }
+  //           });
+  //       });
+  //   });
+
+  
+//   $(document).ready(function() {
+//     $('#submitForm').click(function(event) {
+//         event.preventDefault();  // Prevent the default form submission
+
+//         // Show the preloader and hide the form
+//         $('#preloader').show();
+//         $('#form-container').hide();  // Hide the form
+
+//         var formData = new FormData($('#ajaxForm')[0]);  // Create FormData object from the form
+
+//         $.ajax({
+//             url: '{% url "upload" %}',  // Replace with the URL to your Django view
+//             type: 'POST',
+//             data: formData,
+//             processData: false,
+//             contentType: false,
+//             success: function(response) {
+//                 console.log('Form submitted successfully: ', response);
+
+//                 // Hide the preloader
+//                 $('#preloader').hide();
+
+//                 // Check if the response is successful and contains the video URL
+//                 if (response.status === 'success') {
+//                     // Hide the form and show the video card
+//                     $('#video-card').show();  // Show the video card
+//                     $('#video-iframe').attr('src', response.video_url).show();  // Set the video URL and show the iframe
+//                 } else {
+//                     // If response status is not 'success', show an error message and hide the video card
+//                     alert('Error: ' + response.message);
+//                 }
+//             },
+//             error: function(xhr, status, error) {
+//                 console.error('Form submission failed: ', error);
+//                 alert('Form submission failed! Please try again.');
+
+//                 // Hide the preloader and show the form again on failure
+//                 $('#preloader').hide();
+//                 $('#form-container').show();
+//             }
+//         });
+//     });
+// });
+
+
+$(document).ready(function() {
+    $('#submitForm').click(function(event) {
+        event.preventDefault();  // Prevent the default form submission
+
+        // Show success toast
+        M.toast({html: 'Pocessing...', classes: 'rounded grey'});
+
+        // Show the preloader and hide the form
+        $('#preloader').show();        // Show preloader
+
+        var formData = new FormData($('#ajaxForm')[0]);  // Create FormData object from the form
+
+        $.ajax({
+            url: '{% url "upload" %}',  // Replace with the URL to your Django view
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                console.log('Form submitted successfully: ', response);
+
+                 // Show success toast
+                //  M.toast({html: 'Form submitted successfully!', classes: 'rounded green'});
+
+
+                // Hide the preloader
+                $('#preloader').hide();
+
+                // Check if the response is successful and contains the video URL
+                if (response.status === 'success') {
+
+                    M.toast({html: 'Successfully processed video', classes: 'rounded green'});
+
+                    // Hide the form and show the video card
+                    $('#form-container').hide();
+                    $('#video-card').show();  // Show the video card
+                    $('#video-iframe').attr('src', response.video_url).show();  // Set the video URL and show the iframe
+                } else {
+                    // If response status is not 'success', show an error message and hide the video card
+                    // alert('Error: ' + response.message);
+
+                    // Show error toast with the response message
+                    M.toast({html: 'Error: ' + response.message, classes: 'rounded red'});
+
+                    // Show the form again on failure
+                    $('#form-container').show();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Form submission failed: ', error);
+                // alert('Form submission failed! Please try again.');
+
+                // Show error toast
+                M.toast({html: 'Form submission failed! Please try again.'});
+
+
+
+                // Hide the preloader and show the form again on failure
+                $('#preloader').hide();
+                $('#form-container').show();
+            }
+        });
+    });
+});
+
+
+</script>
+{% endblock %}
