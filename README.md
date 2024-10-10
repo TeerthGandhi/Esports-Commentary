@@ -4,37 +4,74 @@ Esports commentary powered by machine learning (ML) refers to the automated or A
 ![Alt text](assets/UI.png)
 
 
-## Running the Project with Docker
+```markdown
+## 1. Create and Activate a Virtual Environment
 
-To run this project using Docker, follow the steps below:
+To keep the project dependencies isolated, create a virtual environment. You can use `venv` or `virtualenv` for this purpose.
 
-### Prerequisites
+### Using `virtualenv` (recommended)
 
-Make sure you have Docker installed on your machine. You can download and install Docker from [here](https://www.docker.com/get-started).
-
-### Step 1: Build the Docker Image
-
-Navigate to the root of your project directory (where the Dockerfile is located) and run the following command to build the Docker image:
+Install `virtualenv` if you don't have it:
 
 ```bash
-docker build -t esports .
+pip install virtualenv
 ```
 
-This command creates a Docker image named `esports` using the Dockerfile in the current directory (`.`).
-
-### Step 2: Run the Docker Container
-
-Once the Docker image is built, you can run the container with the following command:
+Now, create and activate the virtual environment:
 
 ```bash
-docker run -p 8000:8000 esports
+virtualenv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 ```
 
-### Step 3: Access the Application
+### Using Python's built-in `venv` (alternative method)
 
-Once the container is running, you can access the Django application by navigating to:
-
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 ```
-http://localhost:8000
+
+## 2. Install Dependencies
+
+Once the virtual environment is activated, install the project dependencies from the `requirements.txt` file:
+
+```bash
+pip install -r requirements.txt
+```
+
+## 3. Set Up Environment Variables
+
+Create a `.env` file in the project root directory and add the required environment variables. For example:
+
+```plaintext
+DJANGO_SECRET_KEY=your-secret-key
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+```
+
+## 4. Apply Database Migrations
+
+Before running the project, apply the migrations to set up the database schema:
+
+```bash
+python manage.py migrate
+```
+
+## 5. Run the Development Server
+
+Now that everything is set up, you can run the Django development server on `localhost`:
+
+```bash
+python manage.py runserver
+```
+
+The server will start on `http://127.0.0.1:8000/` or `http://localhost:8000/`.
+
+## 6. Accessing the Application
+
+Once the server is running, open your browser and navigate to:
+
+```bash
+http://127.0.0.1:8000/
 ```
 
