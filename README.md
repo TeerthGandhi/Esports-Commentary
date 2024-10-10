@@ -10,8 +10,6 @@ Esports commentary powered by machine learning (ML) refers to the automated or A
 pip install virtualenv
 ```
 
-Now, create and activate the virtual environment:
-
 ```bash
 virtualenv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
@@ -19,15 +17,13 @@ source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 
 ### 2. Install Dependencies
 
-Once the virtual environment is activated, install the project dependencies from the `requirements.txt` file:
-
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 3. Set Up Environment Variables
 
-Create a `.env` file in the project root directory and add the required environment variables. For example:
+Create a `.env` file in the project root directory:
 
 ```plaintext
 DJANGO_SECRET_KEY=your-secret-key
