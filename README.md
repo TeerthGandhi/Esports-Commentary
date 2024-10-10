@@ -4,7 +4,7 @@ Esports commentary powered by machine learning (ML) refers to the automated or A
 ![Alt text](assets/UI.png)
 
 
-## 1. Create and Activate a Virtual Environment
+### 1. Create and Activate a Virtual Environment
 
 ```bash
 pip install virtualenv
@@ -17,7 +17,7 @@ virtualenv venv
 source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 ```
 
-## 2. Install Dependencies
+#### 2. Install Dependencies
 
 Once the virtual environment is activated, install the project dependencies from the `requirements.txt` file:
 
