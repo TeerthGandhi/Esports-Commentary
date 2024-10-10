@@ -38,6 +38,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 ## 4. Apply Database Migrations
 
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 
