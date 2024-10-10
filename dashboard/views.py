@@ -25,7 +25,7 @@ def upload(request):
 
         import time
         # Add a delay of 5 seconds
-        time.sleep(2)
+        time.sleep(5)
         # Code after the delay will execute
         print("This message is shown after a 5-second delay")
 
