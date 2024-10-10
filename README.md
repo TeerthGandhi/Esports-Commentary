@@ -4,7 +4,6 @@ Esports commentary powered by machine learning (ML) refers to the automated or A
 ![Alt text](assets/UI.png)
 
 
-```markdown
 ## 1. Create and Activate a Virtual Environment
 
 To keep the project dependencies isolated, create a virtual environment. You can use `venv` or `virtualenv` for this purpose.
