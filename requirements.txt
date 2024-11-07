@@ -21,3 +21,27 @@ typing_extensions==4.12.2
 wcwidth==0.2.13
 opencv-python==4.8.1.78
 openai==0.12.0
+# Core data processing and analysis
+pandas>=1.5.0
+numpy>=1.21.0
+
+# Natural Language Processing
+nltk>=3.8.1
+spacy>=3.7.2
+textblob>=0.17.1
+
+# Visualization
+matplotlib>=3.7.1
+seaborn>=0.12.0
+wordcloud>=1.9.2
+
+# Additional dependencies
+scikit-learn>=1.0.2  # Optional: for additional machine learning capabilities if needed
+
+
+
+# Install spacy model separately
+# python -m spacy download en_core_web_sm
+
+# Download required NLTK data
+# python -m nltk.downloader punkt stopwords averaged_perceptron_tagger

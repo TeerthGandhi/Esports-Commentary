@@ -3,12 +3,11 @@ import os
 import base64
 import openai
 import time
+from pathlib import Path
 
 from openai import OpenAI
 
-# Add the client id here 
-client = OpenAI(api_key="") 
-
+client = OpenAI(api_key="")
 
 def extract_frames(video_path, output_folder, frame_interval=60):
     if not os.path.exists(output_folder):
@@ -74,7 +73,7 @@ def get_frame_descriptions(frame_paths, final_prompt, max_retries=3, retry_delay
         "model": "gpt-4o-mini",
         "messages": prompt_messages,
         "max_tokens": 1000,
-        "temperature": 0
+        "temperature": 0  # chanege the temperature if you want more engagement
     }
 
     for attempt in range(max_retries):
@@ -89,21 +88,22 @@ def get_frame_descriptions(frame_paths, final_prompt, max_retries=3, retry_delay
     return None
 
 # Main execution
-# video_path = "video.mp4"
-video_path = "v2.mp4"
+video_path = "video.mp4"
+# video_path = "v2.mp4"
 output_folder = "extracted_frames"
 
 # Calculate video duration and adjust prompt
 video_duration = get_video_duration(video_path)
 print(f"Video duration: {video_duration} seconds.")
 
-word_count = video_duration * 2.5
+word_count = video_duration * 2.5  # change it to 2 if you see the timings don;t match
 print(f"Word Count: {word_count}")
 
 prompt = f"(This video is ONLY {video_duration} seconds long, so make sure the voiceover MUST be less than {word_count} words)"
 
-# final_prompt = "ACT as an commentator. In a conversational style, explain step-by-step what is happening in match the frames suitable for a voiceover." + prompt
-final_prompt = "ACT as an commentator. In a conversational style, explain step-by-step what is happening in valorant game the frames suitable for a voiceover." + prompt
+final_prompt = "ACT as an commentator. In a conversational style, explain step-by-step what is happening in match the frames suitable for a voiceover." + prompt
+# promt can be act as an engaging commentator
+# final_prompt = "ACT as an commentator. In a conversational style, explain step-by-step what is happening in valorant game the frames suitable for a voiceover." + prompt
 
 # Extract frames and get descriptions
 extracted_frames = extract_frames(video_path, output_folder)
@@ -112,3 +112,41 @@ descriptions = get_frame_descriptions(extracted_frames, final_prompt)
 
 print(descriptions)
 
+
+
+def create_voiceover(text, output_audio_path, model="tts-1", voice="echo"):
+    response = client.audio.speech.create(
+        model=model,
+        voice=voice,
+        input=text
+    )
+    response.stream_to_file(Path(output_audio_path))
+
+
+
+
+    from moviepy.editor import VideoFileClip, AudioFileClip
+
+# Function to merge audio with video
+def merge_audio_video(video_path, audio_path, output_video_path):
+    video_clip = VideoFileClip(video_path)
+    audio_clip = AudioFileClip(audio_path)
+
+    final_clip = video_clip.set_audio(audio_clip)
+    final_clip.write_videofile(output_video_path, codec="libx264", audio_codec="aac")
+
+
+
+
+
+
+if extracted_frames:
+    # Create and save voiceover
+    output_audio_path = 'voiceover.mp3'
+    create_voiceover(descriptions, output_audio_path)
+
+    # Merge audio with video and save as new file
+    output_video_path = 'openai2.mp4'
+    merge_audio_video(video_path, output_audio_path, output_video_path)
+else:
+    print("No frames were extracted.")
