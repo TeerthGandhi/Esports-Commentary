@@ -5,129 +5,7 @@
 {% block content %}
 
 <style>
-/* Add left padding to the icon inside brand-logo */
-.brand-logo i.material-icons {
-	padding-left: 20px;
-	/* Adjust this value as per your requirement */
-}
 
-/* Add margin to the bottom of the first nav */
-nav.light-blue.lighten-1 {
-	margin-bottom: 5px;
-	/* Adjust this value as needed */
-}
-
-/* Add margin to the top of the second nav */
-nav.light-blue.lighten-1+nav.light-blue.lighten-1 {
-	margin-top: 5px;
-	/* Adjust this value as needed */
-}
-
-
-nav .input-field input[type="search"] {
-	height: auto !important;
-	/* This will set the height to auto and override any conflicting styles */
-}
-
-
-body {
-	background-color: #f5f5f5 !important;
-	/* Your specific background color */
-}
-
-/* Add space above and below the nav */
-.spaced-nav {
-	margin-top: 4px;
-	/* Adjust space above */
-	margin-bottom: 20px;
-	/* Adjust space below */
-}
-
-/* Turn off flex for card-content */
-.card-content {
-	display: block;
-	/* This disables flex and sets block layout */
-}
-
-/* Custom Card Styling */
-.card {
-	border-radius: 10px;
-	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-	margin-top: 30px;
-}
-
-.card-action {
-	padding: 10px 20px;
-	background-color: #0288d1;
-	border-radius: 0px 0px 10px 10px;
-}
-
-/* Custom Input Fields */
-.input-field input[type="text"] {
-	border-radius: 8px;
-	padding: 10px;
-	font-size: 16px;
-}
-
-
-.file-field .file-path {
-	border-radius: 2px !important;
-	/* Ensure the file path itself stays original */
-
-}
-
-#preloader {
-	display: none;
-	/* Hidden by default */
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: rgba(255, 255, 255, 0.8);
-	z-index: 999;
-	/* Ensure it overlays other content */
-	display: flex;
-	justify-content: center;
-	/* Horizontally center */
-	align-items: center;
-	/* Vertically center */
-}
-
-.preloader-wrapper.big.active {
-	display: inline-block;
-	width: 80px;
-	height: 80px;
-}
-
-.image-container {
-    /* width: 50%; */
-    max-width: 800px;
-    height: 500px;
-    overflow: hidden;
-    position: relative;
-}
-
-canvas {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-    0% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
-    100% {
-        transform: translateY(0);
-    }
-}
-    
 </style>
 
 <nav class="black darken-4">
@@ -138,7 +16,7 @@ canvas {
             <img src="{% static 'img/logo4.png' %}" alt="Esports Commentary" style="height: 70px; vertical-align: middle;">
          </a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-           <li><a href="sass.html" style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">dashboard</i>Dashboard</a></li>
+           <li><a href='{% url "index" %}' style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">dashboard</i>Dashboard</a></li>
            <li><a class="waves-effect waves-light btn-small red darken-4">About</a></li>
         </ul>
      </div>
@@ -147,7 +25,7 @@ canvas {
 <div class="section black">
   <div class="row container">
      <h5 class="header" style="font-weight: bold;">
-        <a href='{% url "index" %}' id="redoButton" class="btn-floating btn-large red pulse right tooltipped"  data-position="right" data-tooltip="Translate again...!" style="display: none;">
+        <a href='{% url "index" %}' id="redoButton1" class="btn-floating btn-large red pulse right tooltipped"  data-position="right" data-tooltip="Translate again...!" style="display: none;">
         <i class="material-icons">translate</i>
         </a>    
      </h5>
@@ -159,7 +37,7 @@ canvas {
      <br>
      <br>
 
-   <div class="row">
+   <div class="row" id="form-container">
       <div class="col s6">
          <div class="image-container">
             <canvas id="canvas1"></canvas>
@@ -234,11 +112,6 @@ canvas {
 
   </div>
 
-   <br>
-   <br>
-   <br>
-   <br>
-
    <div class="row container">
       <div class="row">
          <div class="col s12 m9 offset-m1">
@@ -249,9 +122,108 @@ canvas {
                </div>
             </div>
          </div>
+         <div class="col s12 m2">
+            <h5 class="header" style="font-weight: bold;">
+               <a href='{% url "index" %}' id="redoButton" class="btn-floating btn-large red pulse right tooltipped"  data-position="right" data-tooltip="Translate again" style="display: none;">
+               <i class="material-icons">refresh</i>
+               </a>    
+            </h5>
+         </div>
       </div>
    </div>
+   <br>
+   <br>
+   <br>
+   <br>
 </div>
+
+<script>
+
+$(document).ready(function () {
+    $('.tooltipped').tooltip();
+ });
+ 
+ $(document).ready(function () {
+    $('select').formSelect();
+ });
+ 
+ $(document).ready(function () {
+    $('#submitForm').click(function (event) {
+       event.preventDefault(); // Prevent the default form submission
+ 
+       // Show success toast
+       M.toast({
+          html: 'Pocessing...',
+          classes: 'rounded grey'
+       });
+ 
+       // Show the preloader and hide the form
+       $('#preloader').show(); // Show preloader
+ 
+       var formData = new FormData($('#ajaxForm')[0]); // Create FormData object from the form
+ 
+       $.ajax({
+          url: '{% url "upload" %}', // Replace with the URL to your Django view
+          type: 'POST',
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+             console.log('Form submitted successfully: ', response);
+ 
+             // Show success toast
+             //  M.toast({html: 'Form submitted successfully!', classes: 'rounded green'});
+ 
+ 
+             // Hide the preloader
+             $('#preloader').hide();
+ 
+             // Check if the response is successful and contains the video URL
+             if (response.status === 'success') {
+ 
+                M.toast({
+                   html: 'Successfully processed video',
+                   classes: 'rounded green'
+                });
+ 
+                // Display the success button when the submission is successful
+                $('#redoButton').fadeIn();
+ 
+                // Hide the form and show the video card
+                $('#form-container').hide();
+                $('#video-card').show(); // Show the video card
+                $('#video-iframe').attr('src', response.video_url).show(); // Set the video URL and show the iframe
+             } else {
+ 
+                // Show error toast with the response message
+                M.toast({
+                   html: 'Error: ' + response.message,
+                   classes: 'rounded red'
+                });
+ 
+                // Show the form again on failure
+                $('#form-container').show();
+             }
+          },
+          error: function (xhr, status, error) {
+             console.error('Form submission failed: ', error);
+ 
+             // Show error toast
+             M.toast({
+                   html: 'Form submission failed! Please try again.',
+                   classes: 'rounded red'
+                });
+ 
+             // Hide the preloader and show the form again on failure
+             $('#preloader').hide();
+             $('#form-container').show();
+          }
+       });
+    });
+ });
+ 
+
+</script>
 
 
 {% endblock %}
