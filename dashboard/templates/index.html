@@ -1,229 +1,529 @@
 {% extends 'base.html' %}
 {% load static %}  <!-- Add this line at the top of your template to load the static tag library -->
-
-
 {% block content %}
-
-<style>
-
-</style>
-
 <nav class="black darken-4">
-  <div class="row container black darken-4">
-     <div class="nav-wrapper grey">
-        <!-- <a href="#" class="brand-logo" style="font-size: 18px;font-weight: 500;">Esports Commentary</a> -->
-        <a href="{% url 'index' %}" class="brand-logo">
-            <img src="{% static 'img/logo4.png' %}" alt="Esports Commentary" style="height: 70px; vertical-align: middle;">
+   <div class="row container black darken-4">
+      <div class="nav-wrapper purple">
+         <!-- <a href="#" class="brand-logo" style="font-size: 18px;font-weight: 500;">Esports Commentary</a> -->
+         <a href="{% url 'index' %}" class="brand-logo">
+         <img src="{% static 'img/logo4.png' %}" alt="Esports Commentary" style="height: 70px; vertical-align: middle;">
          </a>
-        <ul id="nav-mobile" class="right hide-on-med-and-down">
-           <li><a href='{% url "index" %}' style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">dashboard</i>Dashboard</a></li>
-           <li><a class="waves-effect waves-light btn-small red darken-4">About</a></li>
-        </ul>
-     </div>
-  </div>
+         <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href='{% url "index" %}' style="font-size: 13px;"><i class="material-icons left" style="font-size: 16px;">dashboard</i>Dashboard</a></li>
+            <li><a class="waves-effect waves-light btn-small red darken-4">About</a></li>
+         </ul>
+      </div>
+   </div>
 </nav>
 <div class="section black">
-  <div class="row container">
-     <h5 class="header" style="font-weight: bold;">
-        <a href='{% url "index" %}' id="redoButton1" class="btn-floating btn-large red pulse right tooltipped"  data-position="right" data-tooltip="Translate again...!" style="display: none;">
-        <i class="material-icons">translate</i>
-        </a>    
-     </h5>
-     <!-- <h1 class="white-text">Howdy,</h1>
-     <p class="grey-text ">Please upload your video here</p> -->
-     <br>
-     <br>
-     <br>
-     <br>
-     <br>
-
-   <div class="row" id="form-container">
-      <div class="col s6">
-         <div class="image-container">
-            <canvas id="canvas1"></canvas>
-        </div>
-      </div>
-      <div class="col s6">
-         <div class="card horizontal">
-            <div class="card-stacked">
-               <div class="card-content">
-                  <div class="row">
-                     <form class="col s12" id="ajaxForm" enctype="multipart/form-data">
-                        {% csrf_token %}  <!-- CSRF Token for security -->
-                        <!-- Textarea Form -->
-                        <div class="input-field col s12">
-                           <i class="material-icons prefix">edit</i>
-                           <textarea id="textarea1" name="textarea_field" class="materialize-textarea"></textarea>
-                           <label for="textarea1">Description</label>
-                        </div>
-                        <!-- Game Type Dropdown -->
-                        <div class="col s12">
-                           <div class="input-field col s12">
-                              <i class="material-icons prefix">sports_esports</i>
-                              <select name="game_type">
-                                 <option value="" disabled selected>Choose your option</option>
-                                 <option value="1">Game 1</option>
-                                 <option value="2">Game 2</option>
-                                 <option value="3">Game 3</option>
-                              </select>
-                              <label>Game Type</label>
-                           </div>
-                        </div>
-                        <!-- File Upload -->
-                        <div class="col s12 m12">
-                           <div class="file-field input-field">
-                              <div class="btn blue">
-                                 <span>File</span>
-                                 <input type="file" name="file_upload" id="file_upload">
-                              </div>
-                              <div class="file-path-wrapper">
-                                 <input class="file-path validate" type="text">
+   <div class="row container">
+      <h5 class="header" style="font-weight: bold;">
+         <a href='{% url "index" %}' id="redoButton1" class="btn-floating btn-large red pulse right tooltipped"  data-position="right" data-tooltip="Translate again...!" style="display: none;">
+         <i class="material-icons">translate</i>
+         </a>    
+      </h5>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="row" id="form-container">
+         <div class="col s6">
+            <div class="image-container">
+               <canvas id="canvas1"></canvas>
+            </div>
+         </div>
+         <div class="col s6">
+            <div class="card horizontal">
+               <div class="card-stacked">
+                  <div class="card-content" id="card-content">
+                     <div class="row">
+                        <form class="col s12" id="ajaxForm" enctype="multipart/form-data">
+                           {% csrf_token %}  <!-- CSRF Token for security -->
+                           <!-- Game Type Dropdown -->
+                           <div class="col s12">
+                              <div class="input-field col s12">
+                                 <i class="material-icons prefix">edit</i>
+                                 <select name="textarea_field">
+                                    <option value="" disabled selected>Choose your option</option>
+                                    <option value="0">Normal</option>
+                                    <option value="1">Creative</option>
+                                 </select>
+                                 <label>Type</label>
                               </div>
                            </div>
-                        </div>
-                     </form>
+                           <!-- Game Type Dropdown -->
+                           <div class="col s12">
+                              <div class="input-field col s12">
+                                 <i class="material-icons prefix">sports_esports</i>
+                                 <select name="game_type">
+                                    <option value="" disabled selected>Choose your option</option>
+                                    <option value="1">Game 1</option>
+                                    <option value="2">Game 2</option>
+                                    <option value="3">Game 3</option>
+                                 </select>
+                                 <label>Game Type</label>
+                              </div>
+                           </div>
+                           <!-- File Upload -->
+                           <div class="col s12 m12">
+                              <div class="file-field input-field">
+                                 <div class="btn blue">
+                                    <span>File</span>
+                                    <input type="file" name="file_upload" id="file_upload">
+                                 </div>
+                                 <div class="file-path-wrapper">
+                                    <input class="file-path validate" type="text">
+                                 </div>
+                              </div>
+                           </div>
+                           <input type="hidden" id="text_english" name="text_english" value="">
+                           <input type="hidden" id="text_french" name="text_french" value="">
+                        </form>
+                     </div>
+                     <!-- Submit Button -->
+                     <button class="btn waves-effect waves-light right blue" type="submit" id="submitForm">Generate Text
+                     <i class="material-icons right">send</i>
+                     </button>
                   </div>
-                  <!-- Submit Button -->
-                  <button class="btn waves-effect waves-light right blue" type="submit" id="submitForm">Submit
-                  <i class="material-icons right">send</i>
-                  </button>
-               </div>
-               <!-- Preloader Spinner (Positioned over the form) -->
-               <div id="preloader" class="center" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.8); z-index: 999;">
-                  <div class="preloader-wrapper active">
-                     <div class="spinner-layer spinner-blue-only">
-                        <div class="circle-clipper left">
-                           <div class="circle"></div>
+                  <div class="card-content" style="display: none;" id="text-card">
+                     <div class="row">
+                        <div class="col s12">
+                           <h5>Generated Text</h5>
+                           <div id="generated_text" 
+                              style="height: 300px; overflow-y: auto; padding: 10px; line-height: 1.6; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+                              <!-- Content will be added dynamically -->
+                           </div>
+                           <!-- <label for="generated_text" style="display: block; margin-top: 5px; color: gray;">Generated Text</label> -->
                         </div>
-                        <div class="gap-patch">
-                           <div class="circle"></div>
+                     </div>
+                     <form id="generate-french" enctype="multipart/form-data">
+                        {% csrf_token %} 
+                        <input type="hidden" id="generated_text_data" name="generated_text_data" value="">
+                     </form>
+                     <!-- Submit Button -->
+                     <div class="button-group">
+                        <button 
+                           class="btn waves-effect waves-light blue button-spacing" 
+                           type="button" 
+                           id="goBackButton">
+                        Go Back
+                        <i class="material-icons right">arrow_back</i>
+                        </button>
+                        <button class="btn waves-effect waves-light blue" style="margin-right: 10px;" type="button" id="generateNewButton">
+                        Generate New
+                        <i class="material-icons right">autorenew</i>
+                        </button>
+                        <button class="btn waves-effect waves-light blue right" type="button" id="generateFrenchButton">
+                        Generate French
+                        <i class="material-icons right">translate</i>
+                        </button>
+                     </div>
+                  </div>
+                  <div class="card-content" style="display: none;" id="video-card">
+                     <div class="row">
+                        <div class="col s12">
+                           <h5>Generated Text</h5>
+                           <div id="generated_text_french" 
+                              style="height: 300px; overflow-y: auto; padding: 10px; line-height: 1.6; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
+                              <!-- Content will be added dynamically -->
+                           </div>
+                           <!-- <label for="generated_text" style="display: block; margin-top: 5px; color: gray;">Generated Text</label> -->
                         </div>
-                        <div class="circle-clipper right">
-                           <div class="circle"></div>
+                     </div>
+                     <form id="final-form" enctype="multipart/form-data">
+                        {% csrf_token %} 
+                        <input type="hidden" id="french_data" value="">
+                        <input type="hidden" id="english_data" value="">
+                     </form>
+                     <!-- Submit Button -->
+                     <div class="button-group">
+                        <button 
+                           class="btn waves-effect waves-light blue button-spacing" 
+                           type="button" 
+                           id="goBackButtonFrench">
+                        Go Back
+                        <i class="material-icons right">arrow_back</i>
+                        </button>
+                        <button class="btn waves-effect waves-light blue right" type="button" id="generateVideo">
+                        Generate Video
+                        <i class="material-icons right">ondemand_video</i>
+                        </button>
+                     </div>
+                  </div>
+                  <!-- Preloader Spinner (Positioned over the form) -->
+                  <div id="preloader" class="center" style="display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255, 255, 255, 0.8); z-index: 999;">
+                     <div class="preloader-wrapper active">
+                        <div class="spinner-layer spinner-blue-only">
+                           <div class="circle-clipper left">
+                              <div class="circle"></div>
+                           </div>
+                           <div class="gap-patch">
+                              <div class="circle"></div>
+                           </div>
+                           <div class="circle-clipper right">
+                              <div class="circle"></div>
+                           </div>
                         </div>
                      </div>
                   </div>
                </div>
             </div>
-         </div>
-
-      </div>
-    </div>
-
-  </div>
-
-   <div class="row container">
-      <div class="row">
-         <div class="col s12 m9 offset-m1">
-            <div class="card grey lighten-5" id="video-card" style="display: none;">
-               <!-- <div class="card grey lighten-5" id="video-card" >  -->
-               <div class="video-container">
-                  <iframe id="video-iframe" width="560" height="315" style="display:none;" frameborder="0" allowfullscreen></iframe>
+            <!-- <div class="row container"> -->
+            <div class="row">
+               <div class="col s12">
+                  <div class="card purple lighten-5" id="video-generated" style="display: none;">
+                     <div class="video-container">
+                        <iframe id="video-iframe" width="560" height="315" style="display:none;" frameborder="0" allowfullscreen></iframe>
+                     </div>
+                  </div>
                </div>
             </div>
-         </div>
-         <div class="col s12 m2">
-            <h5 class="header" style="font-weight: bold;">
-               <a href='{% url "index" %}' id="redoButton" class="btn-floating btn-large red pulse right tooltipped"  data-position="right" data-tooltip="Translate again" style="display: none;">
-               <i class="material-icons">refresh</i>
-               </a>    
-            </h5>
+            <!-- </div> -->
          </div>
       </div>
    </div>
-   <br>
-   <br>
-   <br>
-   <br>
 </div>
-
 <script>
+  document.getElementById('goBackButton').addEventListener('click', function () {
+   // $('#video-card').hide();
+   $('#text-card').hide();
+   $('#card-content').show();
+});
+
+document.getElementById('goBackButtonFrench').addEventListener('click', function () {
+   // alert("here..");
+   $('#video-card').hide();
+   $('#text-card').show();
+});
 
 $(document).ready(function () {
-    $('.tooltipped').tooltip();
- });
- 
- $(document).ready(function () {
-    $('select').formSelect();
- });
- 
- $(document).ready(function () {
-    $('#submitForm').click(function (event) {
-       event.preventDefault(); // Prevent the default form submission
- 
-       // Show success toast
-       M.toast({
-          html: 'Pocessing...',
-          classes: 'rounded grey'
-       });
- 
-       // Show the preloader and hide the form
-       $('#preloader').show(); // Show preloader
- 
-       var formData = new FormData($('#ajaxForm')[0]); // Create FormData object from the form
- 
-       $.ajax({
-          url: '{% url "upload" %}', // Replace with the URL to your Django view
-          type: 'POST',
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function (response) {
-             console.log('Form submitted successfully: ', response);
- 
-             // Show success toast
-             //  M.toast({html: 'Form submitted successfully!', classes: 'rounded green'});
- 
- 
-             // Hide the preloader
-             $('#preloader').hide();
- 
-             // Check if the response is successful and contains the video URL
-             if (response.status === 'success') {
- 
-                M.toast({
-                   html: 'Successfully processed video',
-                   classes: 'rounded green'
-                });
- 
-                // Display the success button when the submission is successful
-                $('#redoButton').fadeIn();
- 
-                // Hide the form and show the video card
-                $('#form-container').hide();
-                $('#video-card').show(); // Show the video card
-                $('#video-iframe').attr('src', response.video_url).show(); // Set the video URL and show the iframe
-             } else {
- 
-                // Show error toast with the response message
-                M.toast({
-                   html: 'Error: ' + response.message,
-                   classes: 'rounded red'
-                });
- 
-                // Show the form again on failure
-                $('#form-container').show();
-             }
-          },
-          error: function (xhr, status, error) {
-             console.error('Form submission failed: ', error);
- 
-             // Show error toast
-             M.toast({
-                   html: 'Form submission failed! Please try again.',
-                   classes: 'rounded red'
-                });
- 
-             // Hide the preloader and show the form again on failure
-             $('#preloader').hide();
-             $('#form-container').show();
-          }
-       });
-    });
- });
- 
+   $('select').formSelect();
+});
 
+$(document).ready(function () {
+   $('.tooltipped').tooltip();
+});
+
+$(document).ready(function () {
+   $('select').formSelect();
+});
+
+$(document).ready(function () {
+   $('#submitForm').click(function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Show success toast
+      M.toast({
+         html: 'Pocessing...',
+         classes: 'purple'
+      });
+
+      // Show the preloader and hide the form
+      $('#preloader').show(); // Show preloader
+
+      var formData = new FormData($('#ajaxForm')[0]); // Create FormData object from the form
+
+      $.ajax({
+         url: '{% url "upload" %}', // Replace with the URL to your Django view
+         type: 'POST',
+         data: formData,
+         processData: false,
+         contentType: false,
+         success: function (response) {
+            console.log('Form submitted successfully: ', response);
+
+            // Hide the preloader
+            $('#preloader').hide();
+
+            // Check if the response is successful and contains the video URL
+            if (response.status === 'success') {
+
+               M.toast({
+                  html: 'Successfully processed video',
+                  classes: 'green'
+               });
+
+               // Hide the current form and show the new content
+               $('#card-content').hide(); // Hides the current form
+
+               // Show the container
+               $('#text-card').fadeIn();
+
+               // Add the generated text to the div
+               $('#generated_text').text(response.generated_text);
+
+               $('#generated_text_data').val(response.generated_text);
+
+               $('#text_english').val(response.generated_text);
+
+
+               // If using Materialize, ensure the updated fields are correctly displayed
+               M.updateTextFields();
+
+            } else {
+
+               // Show error toast with the response message
+               M.toast({
+                  html: 'Error: ' + response.message,
+                  classes: 'red'
+               });
+
+               // Show the form again on failure
+               $('#form-container').show();
+            }
+         },
+         error: function (xhr, status, error) {
+            console.error('Form submission failed: ', error);
+
+            // Show error toast
+            M.toast({
+               html: 'Form submission failed! Please try again.',
+               classes: 'red'
+            });
+
+            // Hide the preloader and show the form again on failure
+            $('#preloader').hide();
+            $('#form-container').show();
+         }
+      });
+   });
+});
+
+
+$(document).ready(function () {
+   $('#generateNewButton').click(function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Show success toast
+      M.toast({
+         html: 'Pocessing...',
+         classes: 'purple'
+      });
+
+      // Show the preloader and hide the form
+      $('#preloader').show(); // Show preloader
+
+      var formData = new FormData($('#ajaxForm')[0]); // Create FormData object from the form
+
+      $.ajax({
+         url: '{% url "upload" %}', // Replace with the URL to your Django view
+         type: 'POST',
+         data: formData,
+         processData: false,
+         contentType: false,
+         success: function (response) {
+            console.log('Form submitted successfully: ', response);
+
+            // Show success toast
+            //  M.toast({html: 'Form submitted successfully!', classes: 'green'});
+
+
+            // Hide the preloader
+            $('#preloader').hide();
+
+            // Check if the response is successful and contains the video URL
+            if (response.status === 'success') {
+
+               M.toast({
+                  html: 'Successfully processed video',
+                  classes: 'green'
+               });
+
+               // Hide the current form and show the new content
+               $('#card-content').hide(); // Hides the current form
+
+               // Show the container
+               $('#text-card').fadeIn();
+
+               // Add the generated text to the div
+               $('#generated_text').text(response.generated_text);
+
+               $('#text_english').val(response.generated_text);
+
+               $('#generated_text_data').val(response.generated_text);
+
+               // If using Materialize, ensure the updated fields are correctly displayed
+               M.updateTextFields();
+
+            } else {
+
+               // Show error toast with the response message
+               M.toast({
+                  html: 'Error: ' + response.message,
+                  classes: 'red'
+               });
+
+               // Show the form again on failure
+               $('#form-container').show();
+            }
+         },
+         error: function (xhr, status, error) {
+            console.error('Form submission failed: ', error);
+
+            // Show error toast
+            M.toast({
+               html: 'Form submission failed! Please try again.',
+               classes: 'red'
+            });
+
+            // Hide the preloader and show the form again on failure
+            $('#preloader').hide();
+            $('#form-container').show();
+         }
+      });
+   });
+});
+
+
+$(document).ready(function () {
+   $('#generateFrenchButton').click(function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Show success toast
+      M.toast({
+         html: 'Pocessing...',
+         classes: 'purple'
+      });
+
+      // Show the preloader and hide the form
+      $('#preloader').show(); // Show preloader
+
+      var formData = new FormData($('#generate-french')[0]); // Create FormData object from the form
+
+      $.ajax({
+         url: '{% url "generate_french" %}', // Replace with the URL to your Django view
+         type: 'POST',
+         data: formData,
+         processData: false,
+         contentType: false,
+         success: function (response) {
+            console.log('Form submitted successfully: ', response);
+
+            // Hide the preloader
+            $('#preloader').hide();
+
+            // Check if the response is successful and contains the video URL
+            if (response.status === 'success') {
+
+               M.toast({
+                  html: 'Successfully processed video',
+                  classes: 'green'
+               });
+
+               // Hide the current form and show the new content
+               $('#card-content').hide(); // Hides the current form
+               $('#text-card').hide();
+
+
+               // Show the container
+               $('#video-card').fadeIn();
+
+               // Add the generated text to the div
+               $('#generated_text_french').text(response.generated_text);
+
+               $('#text_french').val(response.generated_text);
+
+            } else {
+
+               // Show error toast with the response message
+               M.toast({
+                  html: 'Error: ' + response.message,
+                  classes: 'red'
+               });
+
+               // Show the form again on failure
+               $('#form-container').show();
+            }
+         },
+         error: function (xhr, status, error) {
+            console.error('Form submission failed: ', error);
+
+            // Show error toast
+            M.toast({
+               html: 'Form submission failed! Please try again.',
+               classes: 'red'
+            });
+
+            // Hide the preloader and show the form again on failure
+            $('#preloader').hide();
+            $('#form-container').show();
+         }
+      });
+   });
+});
+
+
+$(document).ready(function () {
+   $('#generateVideo').click(function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Show success toast
+      M.toast({
+         html: 'Pocessing...',
+         classes: 'purple'
+      });
+
+      // Show the preloader and hide the form
+      $('#preloader').show(); // Show preloader
+
+      var formData = new FormData($('#ajaxForm')[0]); // Create FormData object from the form
+
+      $.ajax({
+         url: '{% url "generate_video" %}', // Replace with the URL to your Django view
+         type: 'POST',
+         data: formData,
+         processData: false,
+         contentType: false,
+         success: function (response) {
+            console.log('Form submitted successfully: ', response);
+
+            // Hide the preloader
+            $('#preloader').hide();
+
+            // Check if the response is successful and contains the video URL
+            if (response.status === 'success') {
+
+               M.toast({
+                  html: 'Successfully processed video',
+                  classes: 'green'
+               });
+
+
+               // Hide the form and show the video card
+               $('#video-card').hide();
+
+               $('#video-generated').show(); // Show the video card
+               $('#video-iframe').attr('src', response.video_url).show();
+
+
+            } else {
+
+               // Show error toast with the response message
+               M.toast({
+                  html: 'Error: ' + response.message,
+                  classes: 'red'
+               });
+
+               // Show the form again on failure
+               $('#form-container').show();
+            }
+         },
+         error: function (xhr, status, error) {
+            console.error('Form submission failed: ', error);
+
+            // Show error toast
+            M.toast({
+               html: 'Form submission failed! Please try again.',
+               classes: 'red'
+            });
+
+            // Hide the preloader and show the form again on failure
+            $('#preloader').hide();
+            $('#form-container').show();
+         }
+      });
+   });
+});
 </script>
-
-
 {% endblock %}

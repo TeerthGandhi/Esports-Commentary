@@ -1,40 +1,88 @@
-{% load static %}  <!-- Add this line at the top of your template to load the static tag library -->
+{% load static %}  <!-- Load the static tag library -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Django Project with MaterializeCSS</title>
-    <script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
-    <!-- MaterializeCSS library from static directory -->
-    <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/preview.css' %}">
 
+    <!-- Include jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Include Google Font for Handwritten Look -->
-    <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- Include other scripts like Materialize JS if needed -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
+    
+    
+     <!-- MaterializeCSS library from static directory -->
+     <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+     <link rel="stylesheet" href="{% static 'css/preview.css' %}">
+ 
+ 
+     <!-- Include Google Font for Handwritten Look -->
+     <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
+     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <!-- Inline Style for Sticky Footer -->
+    <style>
+        html {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #000000; 
 
+        }
+        main {
+            flex: 1; /* Ensures main content grows to push footer down */
+            background-color: #000000;
 
+        }
+        footer {
+            background-color: #b71c1c; 
+            color: black;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        #generated_text {
+            height: 550px;  /* Set a fixed height for the textarea */
+            overflow-y: auto;  /* Enable vertical scrolling if content exceeds the height */
+            padding: 10px;  /* Add some padding for better readability */
+            line-height: 1.6;  /* Adjust line-height for better spacing between lines */
+        }
+    </style>
 </head>
 <body>
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
-<!-- Your content here -->
-{% block content %}
-{% endblock %}
-  <footer class="page-footer red darken-4">
-    <div class="footer-copyright">
-      <div class="container">
-        © 2024 Esports Commentary Pvt. Ltd.
-      </div>
-    </div>
-  </footer>
+    <!-- Footer -->
+    <footer class="page-footer red darken-4">
+        <div class="footer-copyright">
+            <div class="container">
+                © 2024 Esports Commentary Pvt. Ltd. All rights reserved.
+            </div>
+        </div>
+    </footer>
 
-
-<!-- MaterializeCSS JavaScript from static directory -->
-<script src="{% static 'js/materialize.min.js' %}"></script>
-<!-- <script src="{% static 'js/script.js' %}"></script> -->
-<script src="{% static 'js/particle.js' %}"></script>
+    <!-- MaterializeCSS JavaScript -->
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+    <script src="{% static 'js/particle.js' %}"></script>
+    
+    <!-- Optional: Initialize Materialize Components -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Materialize components like tooltips and modals
+            M.AutoInit();
+        });
+    </script>
 </body>
 </html>
