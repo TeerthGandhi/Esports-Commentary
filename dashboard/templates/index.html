@@ -210,87 +210,131 @@ $(document).ready(function () {
 });
 
 $(document).ready(function () {
-   $('#submitForm').click(function (event) {
-      event.preventDefault(); // Prevent the default form submission
+    $('#submitForm').click(function (event) {
+        event.preventDefault();
 
-      // Show success toast
-      M.toast({
-         html: 'Pocessing...',
-         classes: 'purple'
-      });
+        // Form validation
+        var videoFile = $('input[type="file"]')[0].files[0];
+        var textType = $('select[name="textarea_field"]').val();
+        var gameType = $('select[name="game_type"]').val();
 
-      // Show the preloader and hide the form
-      $('#preloader').show(); // Show preloader
+        // Validate fields
+        if (!videoFile) {
+            M.toast({ html: 'Please select a video file', classes: 'red' });
+            return;
+        }
+        if (!textType) {
+            M.toast({ html: 'Please select a text type', classes: 'red' });
+            return;
+        }
+        if (!gameType) {
+            M.toast({ html: 'Please select a game type', classes: 'red' });
+            return;
+        }
 
-      var formData = new FormData($('#ajaxForm')[0]); // Create FormData object from the form
+        // Show processing toast
+        M.toast({
+            html: 'Processing video, please wait...',
+            classes: 'purple',
+            displayLength: 10000
+        });
 
-      $.ajax({
-         url: '{% url "upload" %}', // Replace with the URL to your Django view
-         type: 'POST',
-         data: formData,
-         processData: false,
-         contentType: false,
-         success: function (response) {
-            console.log('Form submitted successfully: ', response);
+        // Show preloader and hide form
+        $('#preloader').show();
+        $('#card-content').fadeOut();
 
-            // Hide the preloader
-            $('#preloader').hide();
+        // Create FormData and append files
+        var formData = new FormData($('#ajaxForm')[0]);
 
-            // Check if the response is successful and contains the video URL
-            if (response.status === 'success') {
+        $.ajax({
+            url: '{% url "upload" %}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            success: function (response) {
+                console.log('Video processing response:', response);
+                $('#preloader').hide();
 
-               M.toast({
-                  html: 'Successfully processed video',
-                  classes: 'green'
-               });
+                if (response.status === 'success') {
+                    M.toast({
+                        html: 'Successfully processed video',
+                        classes: 'green',
+                        displayLength: 4000
+                    });
 
-               // Hide the current form and show the new content
-               $('#card-content').hide(); // Hides the current form
+                    // Hide form and show results
+                    $('#card-content').hide();
+                    $('#text-card').fadeIn();
 
-               // Show the container
-               $('#text-card').fadeIn();
+                    // Extract description from the response
+                    const description = response.generated_text.description;
+                    console.log("desd",description)
+                    // Update UI with generated text
+                    $('#generated_text').html(description);
+                    $('#generated_text_data').val(description);
+                    $('#text_english').val(description);
 
-               // Add the generated text to the div
-               $('#generated_text').text(response.generated_text);
+                    // Save text for potential reuse
+                    localStorage.setItem('lastGeneratedText', description);
 
-               $('#generated_text_data').val(response.generated_text);
+                    // Update Materialize fields
+                    M.updateTextFields();
+                } else {
+                    handleError(response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Video processing failed:', error);
+                
+                let errorMessage = 'Failed to process video. Please try again.';
+                
+                // Handle specific HTTP errors
+                if (xhr.status === 413) {
+                    errorMessage = 'Video file is too large. Please use a smaller file.';
+                } else if (xhr.status === 415) {
+                    errorMessage = 'Unsupported video format. Please use MP4, MPEG, or QuickTime format.';
+                } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
 
-               $('#text_english').val(response.generated_text);
-
-
-               // If using Materialize, ensure the updated fields are correctly displayed
-               M.updateTextFields();
-
-            } else {
-
-               // Show error toast with the response message
-               M.toast({
-                  html: 'Error: ' + response.message,
-                  classes: 'red'
-               });
-
-               // Show the form again on failure
-               $('#form-container').show();
+                handleError(errorMessage);
             }
-         },
-         error: function (xhr, status, error) {
-            console.error('Form submission failed: ', error);
+        });
+    });
 
-            // Show error toast
-            M.toast({
-               html: 'Form submission failed! Please try again.',
-               classes: 'red'
-            });
+    // Helper function to handle errors
+    function handleError(message) {
+        $('#preloader').hide();
+        $('#card-content').fadeIn();
+        $('#form-container').show();
 
-            // Hide the preloader and show the form again on failure
-            $('#preloader').hide();
-            $('#form-container').show();
-         }
-      });
-   });
+        M.toast({
+            html: 'Error: ' + message,
+            classes: 'red',
+            displayLength: 6000
+        });
+    }
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 });
-
-
 $(document).ready(function () {
    $('#generateNewButton').click(function (event) {
       event.preventDefault(); // Prevent the default form submission

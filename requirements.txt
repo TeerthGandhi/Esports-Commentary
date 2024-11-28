@@ -1,6 +1,8 @@
 asgiref==3.8.1
 asttokens==2.4.1
 # decorator==5.1.1
+numba==0.60.0
+numpy==2.0.2
 Django==5.1.2
 django-environ==0.11.2
 executing==2.1.0
@@ -18,10 +20,6 @@ stack-data==0.6.3
 traitlets==5.14.3
 typing_extensions==4.12.2
 wcwidth==0.2.13
-opencv-python==4.9.0.80
-openai==1.12.0
-openai-whisper==20231117
-moviepy==1.0.3
 transformers==4.38.2
 torch==2.2.0
 sentencepiece==0.2.0
@@ -32,3 +30,10 @@ Pillow==10.2.0
 librosa==0.10.1
 ffmpeg-python==0.2.0
 python-dotenv==1.0.1
+setuptools
+numpy<2.0
+openai==1.53.0
+openai-whisper==20240930
+moviepy==1.0.3
+opencv-python==4.10.0.84
+

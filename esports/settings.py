@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # apps 
+    # apps
     'dashboard',
 ]
 
@@ -128,7 +128,8 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],  # Use both file and console handlers
+            # Use both file and console handlers
+            'handlers': ['file', 'console'],
             'level': 'INFO',
             'propagate': True,
         },
@@ -170,3 +171,19 @@ STATICFILES_DIRS = [
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# OpenAI API Key
+OPENAI_API_KEY = "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"  # Replace with your actual API key
+
+# Media settings (if not already defined)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Create necessary directories
+EXTRACTED_FRAMES_DIR = os.path.join(MEDIA_ROOT, 'extracted_frames')
+TEMP_DIR = os.path.join(MEDIA_ROOT, 'temp')
+
+# Create directories if they don't exist
+os.makedirs(EXTRACTED_FRAMES_DIR, exist_ok=True)
+os.makedirs(TEMP_DIR, exist_ok=True)
