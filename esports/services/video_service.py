@@ -17,7 +17,7 @@ class VideoProcessingService:
         self.output_folder = settings.EXTRACTED_FRAMES_DIR
         self.temp_dir = settings.TEMP_DIR
 
-    def process_video(self, video_file, text_type="normal", game_type=None):
+    def process_video(self, video_file, text_type="normal", game_type=None, temperature=0):
         """
         Main method to process video and generate descriptions
         """
@@ -54,7 +54,7 @@ class VideoProcessingService:
             combined_text = self._combine_descriptions(
                 frame_descriptions, audio_transcription)
             final_description = self.get_rewritten_description(
-                combined_text, video_duration, word_count)
+                combined_text, video_duration, word_count, temperature)
 
             # Cleanup
             # self._cleanup_temp_files(video_path, audio_path, extracted_frames)
@@ -169,7 +169,7 @@ class VideoProcessingService:
             print(f"Error in audio transcription: {str(e)}")
             raise
 
-    def get_rewritten_description(self, text, duration, word_count):
+    def get_rewritten_description(self, text, duration, word_count, temperature):
         """Get rewritten description from OpenAI"""
         try:
             system_prompt = (
@@ -186,7 +186,7 @@ class VideoProcessingService:
                     {"role": "user", "content": text}
                 ],
                 max_tokens=1000,
-                temperature=0.7
+                temperature=0 if temperature == 0 else 1
             )
 
             return response.choices[0].message.content
