@@ -9,6 +9,7 @@ from openai import OpenAI
 from django.conf import settings
 from django.core.files.storage import default_storage
 import numpy as np
+import shutil
 
 
 class VideoProcessingService:
@@ -23,6 +24,7 @@ class VideoProcessingService:
         """
         try:
 
+            self._clear_media_folder()
             # Save uploaded file temporarily
             video_path = self._save_temp_file(video_file)
             print("Video path generated:", video_path)
@@ -69,6 +71,30 @@ class VideoProcessingService:
         except Exception as e:
             print(f"Error in process_video: {str(e)}")
             raise Exception(f"Video processing failed: {str(e)}")
+
+    def _clear_media_folder(self):
+        """Clear all contents from the media folder"""
+        try:
+            media_root = settings.MEDIA_ROOT
+            if os.path.exists(media_root):
+                # Clear all subdirectories and files in media folder
+                for item in os.listdir(media_root):
+                    item_path = os.path.join(media_root, item)
+                    try:
+                        if os.path.isfile(item_path):
+                            os.unlink(item_path)
+                        elif os.path.isdir(item_path):
+                            shutil.rmtree(item_path)
+                    except Exception as e:
+                        print(f"Error while deleting {item_path}: {str(e)}")
+
+            # Recreate necessary subdirectories
+            os.makedirs(self.output_folder, exist_ok=True)
+            os.makedirs(self.temp_dir, exist_ok=True)
+            print("Media folder cleared successfully")
+        except Exception as e:
+            print(f"Error clearing media folder: {str(e)}")
+            raise
 
     def extract_frames(self, video_path, frame_interval=60):
         """Extract frames from video"""

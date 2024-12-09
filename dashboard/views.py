@@ -5,7 +5,10 @@ from esports.services.video_service import VideoProcessingService
 import json
 import logging
 from esports.services.translation_service import TranslationService
-
+from esports.services.voiceover_service import VoiceoverService
+from django.http import HttpResponse, JsonResponse
+import zipfile
+from io import BytesIO
 logger = logging.getLogger(__name__)
 
 
@@ -130,39 +133,101 @@ def generate_french(request):
 #     return render(request, 'index.html')
 
 
+# def generate_video(request):
+#     if request.method == 'POST':
+#         # Assuming file and other form data is captured (as explained earlier)
+#         uploaded_file = request.FILES.get('file_upload')
+#         textarea_value = request.POST.get('textarea_field')
+#         game_type = request.POST.get('game_type')
+#
+#         text_english = request.POST.get('text_english')
+#         text_french = request.POST.get('text_french')
+#
+#         print(uploaded_file)
+#         print(textarea_value)
+#         print(game_type)
+#         print(text_english)
+#         print(text_french)
+#
+#         # Add your logic to handle the uploaded file and process the video
+#         if uploaded_file and textarea_value and game_type:
+#             # Assuming video URL generation or video upload is successful
+#             # Replace with actual video URL
+#             video_url = 'https://www.youtube.com/embed/6zEkCNPF664'
+#
+#             # Return success response with video URL
+#             return JsonResponse({
+#                 'status': 'success',
+#                 'video_url': video_url,
+#             })
+#         else:
+#             # Return error response if any field is missing or failed
+#             return JsonResponse({
+#                 'status': 'error',
+#                 'message': 'Failed to process the video.'
+#             })
+#
+#     # Render the form template
+#     return render(request, 'index.html')
+#
+#
+#
+
+
+@csrf_exempt
 def generate_video(request):
     if request.method == 'POST':
-        # Assuming file and other form data is captured (as explained earlier)
-        uploaded_file = request.FILES.get('file_upload')
-        textarea_value = request.POST.get('textarea_field')
-        game_type = request.POST.get('game_type')
+        try:
+            text_english = request.POST.get('english_data')
+            text_french = request.POST.get('french_data')
 
-        text_english = request.POST.get('text_english')
-        text_french = request.POST.get('text_french')
+            print("e_text", text_english)
 
-        print(uploaded_file)
-        print(textarea_value)
-        print(game_type)
-        print(text_english)
-        print(text_french)
+            if not all([text_english, text_french]):
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Missing required texts'
+                })
 
-        # Add your logic to handle the uploaded file and process the video
-        if uploaded_file and textarea_value and game_type:
-            # Assuming video URL generation or video upload is successful
-            # Replace with actual video URL
-            video_url = 'https://www.youtube.com/embed/6zEkCNPF664'
+            # Generate videos with voiceovers
+            voiceover_service = VoiceoverService()
+            result = voiceover_service.create_videos_with_voiceover(
+                text_english, text_french)
 
-            # Return success response with video URL
-            return JsonResponse({
-                'status': 'success',
-                'video_url': video_url,
-            })
-        else:
-            # Return error response if any field is missing or failed
+            if result['success']:
+                # Create a zip file containing both videos
+                zip_buffer = BytesIO()
+                with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                    # Add English video
+                    with open(result['english_video'], 'rb') as english_video:
+                        zip_file.writestr('video_english.mp4',
+                                          english_video.read())
+
+                    # Add French video
+                    with open(result['french_video'], 'rb') as french_video:
+                        zip_file.writestr('video_french.mp4',
+                                          french_video.read())
+
+                # Prepare zip file for download
+                zip_buffer.seek(0)
+                response = HttpResponse(
+                    zip_buffer.getvalue(), content_type='application/zip')
+                response['Content-Disposition'] = 'attachment; filename=generated_videos.zip'
+                return response
+
+            else:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': result['error']
+                })
+
+        except Exception as e:
             return JsonResponse({
                 'status': 'error',
-                'message': 'Failed to process the video.'
+                'message': str(e)
             })
 
-    # Render the form template
-    return render(request, 'index.html')
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Method not allowed'
+    })

@@ -133,8 +133,8 @@
                      </div>
                      <form id="final-form" enctype="multipart/form-data">
                         {% csrf_token %} 
-                        <input type="hidden" id="french_data" value="">
-                        <input type="hidden" id="english_data" value="">
+                        <input type="hidden" id="french_data" name="french_data" value="">
+                        <input type="hidden" id="english_data" name="english_data" value="">
                      </form>
                      <!-- Submit Button -->
                      <div class="button-group">
@@ -277,7 +277,7 @@ $(document).ready(function () {
                     $('#generated_text').html(description);
                     $('#generated_text_data').val(description);
                     $('#text_english').val(description);
-
+                    $('#english_data').val(description)
                     // Save text for potential reuse
                     localStorage.setItem('lastGeneratedText', description);
 
@@ -467,6 +467,7 @@ $(document).ready(function () {
                $('#generated_text_french').text(response.generated_text);
 
                $('#text_french').val(response.generated_text);
+               $('#french_data').val(response.generated_text)
 
             } else {
 
@@ -511,8 +512,8 @@ $(document).ready(function () {
       // Show the preloader and hide the form
       $('#preloader').show(); // Show preloader
 
-      var formData = new FormData($('#ajaxForm')[0]); // Create FormData object from the form
-
+      var formData = new FormData($('#final-form')[0]); // Create FormData object from the form
+      print("formData",formData)
       $.ajax({
          url: '{% url "generate_video" %}', // Replace with the URL to your Django view
          type: 'POST',
