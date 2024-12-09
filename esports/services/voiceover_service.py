@@ -12,7 +12,7 @@ class VoiceoverService:
     def __init__(self):
         self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
         self.temp_dir = settings.TEMP_DIR
-        self.media_dir = settings.MEDIA_ROOT
+        self.downloads_dir = settings.DOWNLOADS_DIR
 
     def create_videos_with_voiceover(self, text_english: str, text_french: str) -> dict:
         """
@@ -27,6 +27,9 @@ class VoiceoverService:
         """
         try:
             video_path = os.path.join(self.temp_dir, 'video.mp4')
+            if not os.path.exists(self.downloads_dir):
+                os.makedirs(self.downloads_dir)
+
             if not os.path.exists(video_path):
                 raise FileNotFoundError(
                     "Video file not found in temp directory")
@@ -37,9 +40,9 @@ class VoiceoverService:
                 self.temp_dir, 'voiceover_french.mp3')
 
             output_video_path = os.path.join(
-                self.media_dir, 'generated_video_english.mp4')
+                self.downloads_dir, 'generated_video_english.mp4')
             output_video_path_french = os.path.join(
-                self.media_dir, 'generated_video_french.mp4')
+                self.downloads_dir, 'generated_video_french.mp4')
 
             # Create voiceovers
             self._create_voiceover(

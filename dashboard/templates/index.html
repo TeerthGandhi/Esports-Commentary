@@ -498,77 +498,67 @@ $(document).ready(function () {
    });
 });
 
-
 $(document).ready(function () {
-   $('#generateVideo').click(function (event) {
-      event.preventDefault(); // Prevent the default form submission
+    function downloadVideo(videoPath, isLast = false) {
+        window.location.href = `/serve-video/?path=${encodeURIComponent(videoPath)}`;
+        
+        if (isLast) {
+            // Wait a bit to ensure download starts before refresh
+            setTimeout(() => {
+                M.toast({
+                    html: 'Downloads complete. Refreshing page...',
+                    classes: 'green'
+                });
+                
+                // Wait for toast to be visible before refresh
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+            }, 1500);
+        }
+    }
 
-      // Show success toast
-      M.toast({
-         html: 'Pocessing...',
-         classes: 'purple'
-      });
+    $('#generateVideo').click(function (event) {
+        event.preventDefault();
+        $('#preloader').show();
 
-      // Show the preloader and hide the form
-      $('#preloader').show(); // Show preloader
+        var formData = new FormData($('#final-form')[0]);
 
-      var formData = new FormData($('#final-form')[0]); // Create FormData object from the form
-      print("formData",formData)
-      $.ajax({
-         url: '{% url "generate_video" %}', // Replace with the URL to your Django view
-         type: 'POST',
-         data: formData,
-         processData: false,
-         contentType: false,
-         success: function (response) {
-            console.log('Form submitted successfully: ', response);
-
-            // Hide the preloader
-            $('#preloader').hide();
-
-            // Check if the response is successful and contains the video URL
-            if (response.status === 'success') {
-
-               M.toast({
-                  html: 'Successfully processed video',
-                  classes: 'green'
-               });
-
-
-               // Hide the form and show the video card
-               $('#video-card').hide();
-
-               $('#video-generated').show(); // Show the video card
-               $('#video-iframe').attr('src', response.video_url).show();
-
-
-            } else {
-
-               // Show error toast with the response message
-               M.toast({
-                  html: 'Error: ' + response.message,
-                  classes: 'red'
-               });
-
-               // Show the form again on failure
-               $('#form-container').show();
+        $.ajax({
+            url: '{% url "generate_video" %}',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response) {
+                $('#preloader').hide();
+                $('#form-container').show();
+                
+                if (response.status === 'success') {
+                    M.toast({
+                        html: 'Videos generated successfully. Starting downloads...',
+                        classes: 'green'
+                    });
+                    
+                    // Download English video first
+                    downloadVideo(response.english_video, false);
+                    
+                    // Download French video after delay and trigger refresh
+                    setTimeout(() => {
+                        downloadVideo(response.french_video, true);
+                    }, 1500);
+                    
+                } else {
+                    M.toast({html: 'Error generating videos', classes: 'red'});
+                }
+            },
+            error: function (xhr, status, error) {
+                $('#preloader').hide();
+                M.toast({html: 'Error generating videos', classes: 'red'});
+                $('#form-container').show();
             }
-         },
-         error: function (xhr, status, error) {
-            console.error('Form submission failed: ', error);
-
-            // Show error toast
-            M.toast({
-               html: 'Form submission failed! Please try again.',
-               classes: 'red'
-            });
-
-            // Hide the preloader and show the form again on failure
-            $('#preloader').hide();
-            $('#form-container').show();
-         }
-      });
-   });
+        });
+    });
 });
 </script>
 {% endblock %}

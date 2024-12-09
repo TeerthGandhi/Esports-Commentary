@@ -1,5 +1,6 @@
+import os
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from esports.services.video_service import VideoProcessingService
 import json
@@ -108,71 +109,6 @@ def generate_french(request):
 
     return render(request, 'index.html')
 
-# def generate_french(request):
-#     if request.method == 'POST':
-#         # Assuming file and other form data is captured (as explained earlier)
-#         generated_text_data = request.POST.get('generated_text_data')
-#
-#         print("generate_french", generated_text_data)
-#
-#         if generated_text_data:
-#
-#             # Return success response with video URL
-#             return JsonResponse({
-#                 'status': 'success',
-#                 'generated_text': ''' Assumons que la génération de l'URL de la vidéo ou le téléchargement de la vidéo soit réussi Assumons que la génération de l'URL de la vidéo ou le téléchargement de la vidéo soit réussi Assumons que la génération de l'URL de la vidéo ou le téléchargement de la vidéo soit réussi Assumons que la génération de l'URL de la vidéo ou le téléchargement de la vidéo soit réussi''',
-#             })
-#         else:
-#             # Return error response if any field is missing or failed
-#             return JsonResponse({
-#                 'status': 'error',
-#                 'message': 'Failed to process the video.'
-#             })
-#
-#     # Render the form template
-#     return render(request, 'index.html')
-
-
-# def generate_video(request):
-#     if request.method == 'POST':
-#         # Assuming file and other form data is captured (as explained earlier)
-#         uploaded_file = request.FILES.get('file_upload')
-#         textarea_value = request.POST.get('textarea_field')
-#         game_type = request.POST.get('game_type')
-#
-#         text_english = request.POST.get('text_english')
-#         text_french = request.POST.get('text_french')
-#
-#         print(uploaded_file)
-#         print(textarea_value)
-#         print(game_type)
-#         print(text_english)
-#         print(text_french)
-#
-#         # Add your logic to handle the uploaded file and process the video
-#         if uploaded_file and textarea_value and game_type:
-#             # Assuming video URL generation or video upload is successful
-#             # Replace with actual video URL
-#             video_url = 'https://www.youtube.com/embed/6zEkCNPF664'
-#
-#             # Return success response with video URL
-#             return JsonResponse({
-#                 'status': 'success',
-#                 'video_url': video_url,
-#             })
-#         else:
-#             # Return error response if any field is missing or failed
-#             return JsonResponse({
-#                 'status': 'error',
-#                 'message': 'Failed to process the video.'
-#             })
-#
-#     # Render the form template
-#     return render(request, 'index.html')
-#
-#
-#
-
 
 @csrf_exempt
 def generate_video(request):
@@ -180,8 +116,6 @@ def generate_video(request):
         try:
             text_english = request.POST.get('english_data')
             text_french = request.POST.get('french_data')
-
-            print("e_text", text_english)
 
             if not all([text_english, text_french]):
                 return JsonResponse({
@@ -195,31 +129,16 @@ def generate_video(request):
                 text_english, text_french)
 
             if result['success']:
-                # Create a zip file containing both videos
-                zip_buffer = BytesIO()
-                with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-                    # Add English video
-                    with open(result['english_video'], 'rb') as english_video:
-                        zip_file.writestr('video_english.mp4',
-                                          english_video.read())
-
-                    # Add French video
-                    with open(result['french_video'], 'rb') as french_video:
-                        zip_file.writestr('video_french.mp4',
-                                          french_video.read())
-
-                # Prepare zip file for download
-                zip_buffer.seek(0)
-                response = HttpResponse(
-                    zip_buffer.getvalue(), content_type='application/zip')
-                response['Content-Disposition'] = 'attachment; filename=generated_videos.zip'
-                return response
-
-            else:
                 return JsonResponse({
-                    'status': 'error',
-                    'message': result['error']
+                    'status': 'success',
+                    'english_video': result['english_video'],
+                    'french_video': result['french_video']
                 })
+
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Failed to generate videos'
+            })
 
         except Exception as e:
             return JsonResponse({
@@ -231,3 +150,12 @@ def generate_video(request):
         'status': 'error',
         'message': 'Method not allowed'
     })
+
+
+@csrf_exempt
+def serve_video(request):
+    video_path = request.GET.get('path')
+    if video_path and os.path.exists(video_path):
+        return FileResponse(open(video_path, 'rb'), as_attachment=True,
+                            filename=os.path.basename(video_path))
+    return JsonResponse({'error': 'File not found'})

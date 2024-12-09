@@ -183,7 +183,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Create necessary directories
 EXTRACTED_FRAMES_DIR = os.path.join(MEDIA_ROOT, 'extracted_frames')
 TEMP_DIR = os.path.join(MEDIA_ROOT, 'temp')
+DOWNLOADS_DIR = os.path.join(MEDIA_ROOT, 'downloads')
 
 # Create directories if they don't exist
 os.makedirs(EXTRACTED_FRAMES_DIR, exist_ok=True)
 os.makedirs(TEMP_DIR, exist_ok=True)
+os.makedirs(DOWNLOADS_DIR, exist_ok=True)

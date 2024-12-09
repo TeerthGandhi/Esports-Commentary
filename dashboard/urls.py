@@ -9,7 +9,5 @@ urlpatterns = [
     path('upload', views.upload, name='upload'),
     path('generate_french', views.generate_french, name='generate_french'),
     path('generate_video', views.generate_video, name='generate_video'),
-
+    path('serve-video/', views.serve_video, name='serve_video'),
 ]
-
-
