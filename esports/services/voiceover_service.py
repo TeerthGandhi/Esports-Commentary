@@ -4,6 +4,7 @@ from django.conf import settings
 from openai import OpenAI
 import os
 import logging
+import pathlib
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,9 @@ class VoiceoverService:
             dict: Paths to generated videos or error message
         """
         try:
-            video_path = os.path.join(self.temp_dir, 'video.mp4')
+
+            video_path = str(next(pathlib.Path(self.temp_dir).glob('*.mp4')))
+            # video_path = os.path.join(self.temp_dir, 'video.mp4')
             if not os.path.exists(self.downloads_dir):
                 os.makedirs(self.downloads_dir)
 

@@ -174,7 +174,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # OpenAI API Key
-OPENAI_API_KEY = "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"  # Replace with your actual API key
+OPENAI_API_KEY = ""  # Replace with your actual API key
 
 # Media settings (if not already defined)
 MEDIA_URL = '/media/'

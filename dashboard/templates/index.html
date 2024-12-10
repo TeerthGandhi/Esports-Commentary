@@ -349,6 +349,8 @@ $(document).ready(function () {
       $('#preloader').show(); // Show preloader
 
       var formData = new FormData($('#ajaxForm')[0]); // Create FormData object from the form
+       // Create FormData and append files
+        formData.append('temperature', 1);
 
       $.ajax({
          url: '{% url "upload" %}', // Replace with the URL to your Django view
@@ -359,11 +361,6 @@ $(document).ready(function () {
          success: function (response) {
             console.log('Form submitted successfully: ', response);
 
-            // Show success toast
-            //  M.toast({html: 'Form submitted successfully!', classes: 'green'});
-
-
-            // Hide the preloader
             $('#preloader').hide();
 
             // Check if the response is successful and contains the video URL
@@ -372,20 +369,18 @@ $(document).ready(function () {
                M.toast({
                   html: 'Successfully processed video',
                   classes: 'green'
-               });
+               });  // Hide form and show results
+                    $('#card-content').hide();
+                    $('#text-card').fadeIn();
 
-               // Hide the current form and show the new content
-               $('#card-content').hide(); // Hides the current form
-
-               // Show the container
-               $('#text-card').fadeIn();
-
-               // Add the generated text to the div
-               $('#generated_text').text(response.generated_text);
-
-               $('#text_english').val(response.generated_text);
-
-               $('#generated_text_data').val(response.generated_text);
+                    // Extract description from the response
+                    const description = response.generated_text.description;
+                    console.log("desd",description)
+                    // Update UI with generated text
+                    $('#generated_text').html(description);
+                    $('#generated_text_data').val(description);
+                    $('#text_english').val(description);
+                    $('#english_data').val(description)
 
                // If using Materialize, ensure the updated fields are correctly displayed
                M.updateTextFields();
