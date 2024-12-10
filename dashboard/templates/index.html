@@ -90,7 +90,7 @@
                      <div class="row">
                         <div class="col s12">
                            <h5>Generated Text English</h5>
-                           <div id="generated_text" 
+                           <div id="generated_text" contenteditable="true"
                               style="height: 300px; overflow-y: auto; padding: 10px; line-height: 1.6; border: 1px solid #ccc; border-radius: 5px; background-color: #f9f9f9;">
                               <!-- Content will be added dynamically -->
                            </div>
@@ -418,6 +418,10 @@ $(document).ready(function () {
 $(document).ready(function () {
    $('#generateFrenchButton').click(function (event) {
       event.preventDefault(); // Prevent the default form submission
+
+   // Update the hidden input field with the content of the editable div
+    const updatedText = $('#generated_text').text();
+    $('#generated_text_data').val(updatedText);
 
       // Show success toast
       M.toast({
